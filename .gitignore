@@ -1,0 +1,12 @@
+# 爬虫缓存与临时数据
+scripts/scraper/cache/
+scripts/scraper/__pycache__/
+scripts/scraper/*.log
+scripts/scraper/data_raw.json
+scripts/scraper/item_urls.json
+scripts/scraper/validation_report.json
+
+# Python 运行时
+*.pyc
+__pycache__/
+.DS_Store

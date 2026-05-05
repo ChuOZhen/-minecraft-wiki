@@ -1,0 +1,1315 @@
+/* ============================================
+   我的世界物品百科 — 全局样式
+   风格：简洁、沉稳、低饱和度、现代百科
+   ============================================ */
+
+/* ----- CSS 变量（plan.md §3.2）----- */
+:root {
+  /* 背景色系 */
+  --bg-primary:    #f5f4f0;
+  --bg-surface:    #ffffff;
+  --bg-hover:      #eeece6;
+  --bg-active:     #e5e2d8;
+
+  /* 文字色系 */
+  --text-primary:  #1a1a1a;
+  --text-secondary:#5c5c5c;
+  --text-muted:    #9a9a9a;
+
+  /* 强调色（低饱和度绿色，呼应 Minecraft 自然主题） */
+  --accent:        #5c7a5c;
+  --accent-light:  #e8f0e8;
+  --accent-dark:   #3d5c3d;
+
+  /* 边框色 */
+  --border:        #dbd8d0;
+  --border-strong: #c0bdb5;
+
+  /* 功能色（低饱和度） */
+  --color-crafting:  #6b7fa3;
+  --color-smelting:  #a3766b;
+  --color-natural:   #6b9c6b;
+  --color-trade:     #9c8c6b;
+
+  /* 阴影 */
+  --shadow-sm:  0 1px 3px rgba(0,0,0,0.06);
+  --shadow-md:  0 4px 12px rgba(0,0,0,0.08);
+  --shadow-lg:  0 8px 30px rgba(0,0,0,0.12);
+  --shadow-xl:  -4px 0 24px rgba(0,0,0,0.12);
+
+  /* 圆角 */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-full: 24px;
+
+  /* 间距 */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+
+  /* 侧边栏 */
+  --detail-width: 420px;
+
+  /* 过渡 */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s ease;
+  --transition-slow: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ----- 基础重置 ----- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--accent-dark);
+}
+
+ul {
+  list-style: none;
+}
+
+img {
+  display: inline-block;
+  image-rendering: pixelated;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* ----- 通用工具类 ----- */
+.hidden {
+  display: none !important;
+}
+
+/* ----- 搜索栏（plan.md §2.1 + §3.4）----- */
+.search-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--bg-primary);
+  padding: var(--space-md) var(--space-lg);
+  padding-bottom: 0;
+}
+
+.search-wrapper {
+  position: relative;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.search-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.search-input {
+  width: 100%;
+  height: 48px;
+  padding: 0 48px 0 44px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: var(--bg-surface);
+  font-size: 15px;
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.search-input::placeholder {
+  color: var(--text-muted);
+}
+
+.search-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(92, 122, 92, 0.15);
+}
+
+.search-clear {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.search-clear:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+/* 搜索建议下拉 */
+.search-suggestions {
+  position: absolute;
+  top: calc(100% + var(--space-xs));
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(640px, calc(100vw - var(--space-xl) * 2));
+  max-height: 400px;
+  overflow-y: auto;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  z-index: 200;
+}
+
+.suggestion-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-sm) var(--space-md);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.suggestion-item:first-child {
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.suggestion-item:last-child {
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+}
+
+.suggestion-item:hover,
+.suggestion-item.active {
+  background: var(--bg-hover);
+}
+
+.suggestion-item img {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.suggestion-name-zh {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.suggestion-name-en {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-left: auto;
+}
+
+.suggestion-empty {
+  padding: var(--space-lg);
+  text-align: center;
+  color: var(--text-muted);
+}
+
+/* ----- 主内容区 ----- */
+.main-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-lg) var(--space-lg) var(--space-2xl);
+}
+
+/* ----- 面包屑（plan.md §2.2）----- */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
+  padding: var(--space-sm) 0;
+  flex-wrap: wrap;
+}
+
+.breadcrumb-item {
+  font-size: 14px;
+  color: var(--accent);
+  cursor: pointer;
+  transition: color var(--transition-fast);
+  user-select: none;
+}
+
+.breadcrumb-item:hover {
+  color: var(--accent-dark);
+}
+
+.breadcrumb-item.breadcrumb-active {
+  color: var(--text-primary);
+  cursor: default;
+  font-weight: 600;
+}
+
+.breadcrumb-sep {
+  color: var(--text-muted);
+  font-size: 12px;
+  user-select: none;
+}
+
+/* ----- 大类网格（plan.md §2.2 第一层）----- */
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: var(--space-md);
+}
+
+.category-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-lg) var(--space-md);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  user-select: none;
+}
+
+.category-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-strong);
+}
+
+.category-card:active {
+  transform: translateY(0);
+}
+
+.category-card img {
+  width: 48px;
+  height: 48px;
+}
+
+.category-card-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: center;
+}
+
+.category-card-count {
+  font-size: 12px;
+  color: var(--text-muted);
+  background: var(--bg-hover);
+  padding: 2px 10px;
+  border-radius: 10px;
+}
+
+/* ----- 小类标签页（plan.md §2.2 第二层）----- */
+.subcategory-tabs {
+  display: flex;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
+  flex-wrap: wrap;
+}
+
+.subcategory-tab {
+  height: 36px;
+  padding: 0 var(--space-lg);
+  border-radius: var(--radius-lg);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  user-select: none;
+  white-space: nowrap;
+}
+
+.subcategory-tab:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.subcategory-tab.active {
+  background: var(--accent-light);
+  color: var(--accent-dark);
+  border-color: var(--accent);
+}
+
+/* ----- 物品网格（plan.md §2.2 第三层）----- */
+.item-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: var(--space-sm);
+}
+
+.item-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 96px;
+  padding: var(--space-xs);
+  background: var(--bg-surface);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+  user-select: none;
+  position: relative;
+}
+
+.item-cell:hover {
+  background: var(--bg-hover);
+  border-color: var(--border);
+}
+
+.item-cell:active {
+  background: var(--bg-active);
+}
+
+.item-cell img {
+  width: 32px;
+  height: 32px;
+  margin-bottom: var(--space-xs);
+}
+
+.item-cell-name {
+  font-size: 12px;
+  color: var(--text-primary);
+  text-align: center;
+  line-height: 1.3;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  word-break: break-all;
+  max-width: 100%;
+}
+
+/* 物品 tooltip */
+.item-cell[data-tooltip]:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 10px;
+  background: var(--text-primary);
+  color: #fff;
+  font-size: 11px;
+  border-radius: 4px;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* ----- 详情面板覆盖层 ----- */
+.detail-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 500;
+  animation: overlayFadeIn var(--transition-normal) forwards;
+}
+
+@keyframes overlayFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes overlayFadeOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+/* ----- 详情侧边栏（plan.md §2.3 + §3.4）----- */
+.detail-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: var(--detail-width);
+  max-width: 100vw;
+  height: 100vh;
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-xl);
+  z-index: 600;
+  overflow-y: auto;
+  animation: panelSlideIn var(--transition-slow) forwards;
+}
+
+@keyframes panelSlideIn {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
+
+@keyframes panelSlideOut {
+  from { transform: translateX(0); }
+  to   { transform: translateX(100%); }
+}
+
+.detail-panel.closing {
+  animation: panelSlideOut var(--transition-normal) forwards;
+}
+
+.detail-close {
+  position: sticky;
+  top: 0;
+  float: right;
+  width: 40px;
+  height: 40px;
+  margin: var(--space-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: var(--text-secondary);
+  background: var(--bg-surface);
+  z-index: 10;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.detail-close:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.detail-body {
+  padding: 0 var(--space-lg) var(--space-xl);
+}
+
+/* 详情头部 */
+.detail-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+}
+
+.detail-icon {
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+}
+
+.detail-names {
+  flex: 1;
+  min-width: 0;
+}
+
+.detail-name-zh {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.3;
+  margin-bottom: 2px;
+}
+
+.detail-name-en {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+
+.detail-id {
+  font-size: 12px;
+  font-family: monospace;
+  color: var(--text-muted);
+  background: var(--bg-hover);
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 4px;
+  margin-bottom: var(--space-sm);
+}
+
+.detail-tags {
+  display: flex;
+  gap: var(--space-sm);
+  margin-top: var(--space-xs);
+}
+
+.detail-tag {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 500;
+  background: var(--accent-light);
+  color: var(--accent-dark);
+}
+
+/* 详情分割线 */
+.detail-divider {
+  height: 1px;
+  background: var(--border);
+  margin: var(--space-lg) 0;
+}
+
+/* 详情通用区块 */
+.detail-section {
+  margin-bottom: var(--space-md);
+}
+
+.detail-section-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--space-md);
+  padding-left: var(--space-sm);
+  border-left: 3px solid var(--accent);
+  line-height: 1.3;
+}
+
+/* 获取方式列表 */
+.acquisition-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.acquisition-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--bg-hover);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.acquisition-item::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+
+/* 自然生成 */
+.natural-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.natural-list li {
+  font-size: 14px;
+  color: var(--text-secondary);
+  padding-left: var(--space-md);
+  position: relative;
+}
+
+.natural-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-natural);
+}
+
+/* 交易信息 */
+.acquisition-extra {
+  margin-top: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background: rgba(156, 140, 107, 0.1);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* ----- 合成配方 3×3 网格（plan.md §3.4）----- */
+.crafting-recipes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.crafting-recipe {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  flex-wrap: wrap;
+}
+
+.crafting-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 48px);
+  grid-template-rows: repeat(3, 48px);
+  gap: 2px;
+  background: var(--border);
+  border: 2px solid var(--border);
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.crafting-cell {
+  width: 48px;
+  height: 48px;
+  background: #f0ede6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.crafting-cell img {
+  width: 32px;
+  height: 32px;
+}
+
+.crafting-cell.empty {
+  background: #f0ede6;
+}
+
+.crafting-cell-count {
+  position: absolute;
+  bottom: 1px;
+  right: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-shadow: 0 0 2px #fff;
+  pointer-events: none;
+}
+
+.crafting-arrow {
+  display: flex;
+  align-items: center;
+  color: var(--color-crafting);
+  flex-shrink: 0;
+}
+
+.crafting-arrow svg {
+  width: 24px;
+  height: 24px;
+}
+
+.crafting-result {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-shrink: 0;
+}
+
+.crafting-result img {
+  width: 40px;
+  height: 40px;
+}
+
+.crafting-result-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.crafting-result-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.crafting-result-count {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.crafting-type {
+  margin-top: var(--space-xs);
+  font-size: 12px;
+  color: var(--color-crafting);
+  background: rgba(107, 127, 163, 0.1);
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.crafting-type-secondary {
+  color: var(--text-muted);
+  background: var(--bg-hover);
+}
+
+/* ----- 加工配方（烧炼 / 切石 / 锻造）----- */
+.processing-recipes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.processing-recipe {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+  padding: var(--space-md);
+  background: var(--bg-hover);
+  border-radius: var(--radius-sm);
+}
+
+.processing-input,
+.processing-output {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.processing-input img,
+.processing-output img {
+  width: 40px;
+  height: 40px;
+}
+
+.processing-arrow {
+  display: flex;
+  align-items: center;
+  color: var(--color-smelting);
+}
+
+.processing-arrow svg {
+  width: 24px;
+  height: 24px;
+}
+
+.processing-fuel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.processing-fuel img {
+  width: 24px;
+  height: 24px;
+}
+
+.processing-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: var(--space-xs);
+}
+
+.processing-label {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* ----- 相关物品 ----- */
+.related-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.related-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-sm);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+  min-width: 64px;
+}
+
+.related-item:hover {
+  background: var(--bg-hover);
+  border-color: var(--border-strong);
+}
+
+.related-item img {
+  width: 32px;
+  height: 32px;
+}
+
+.related-item-name {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+  max-width: 60px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ----- 空状态 ----- */
+.browser-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  color: var(--text-muted);
+  font-size: 16px;
+}
+
+/* ----- 响应式（plan.md §2.3）----- */
+@media (max-width: 768px) {
+  .search-header {
+    padding: var(--space-sm) var(--space-md);
+  }
+
+  .search-input {
+    height: 44px;
+    font-size: 14px;
+  }
+
+  .main-content {
+    padding: var(--space-md) var(--space-md) var(--space-xl);
+  }
+
+  .category-grid {
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: var(--space-sm);
+  }
+
+  .category-card {
+    padding: var(--space-md) var(--space-sm);
+  }
+
+  .category-card img {
+    width: 36px;
+    height: 36px;
+  }
+
+  .category-card-name {
+    font-size: 13px;
+  }
+
+  .item-grid {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  }
+
+  .item-cell {
+    height: 84px;
+  }
+
+  .detail-panel {
+    width: 100vw;
+  }
+
+  .crafting-recipe {
+    gap: var(--space-md);
+  }
+}
+
+@media (max-width: 480px) {
+  .category-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .item-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .item-cell {
+    height: 76px;
+  }
+
+  .item-cell img {
+    width: 28px;
+    height: 28px;
+  }
+
+  .item-cell-name {
+    font-size: 11px;
+  }
+}
+
+/* ----- 滚动条美化 ----- */
+.detail-panel::-webkit-scrollbar {
+  width: 6px;
+}
+
+.detail-panel::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.detail-panel::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+.detail-panel::-webkit-scrollbar-thumb:hover {
+  background: var(--border-strong);
+}
+
+.search-suggestions::-webkit-scrollbar {
+  width: 6px;
+}
+
+.search-suggestions::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.search-suggestions::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+/* ============================================
+   骨架屏加载动画
+   ============================================ */
+
+.skeleton-category-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: var(--space-md);
+}
+
+.skeleton-card {
+  height: 140px;
+  background: linear-gradient(90deg, var(--bg-hover) 25%, var(--bg-surface) 50%, var(--bg-hover) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite;
+  border-radius: var(--radius-md);
+}
+
+.skeleton-item-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: var(--space-sm);
+}
+
+.skeleton-item {
+  height: 96px;
+  background: linear-gradient(90deg, var(--bg-hover) 25%, var(--bg-surface) 50%, var(--bg-hover) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite;
+  border-radius: var(--radius-sm);
+}
+
+.skeleton-detail {
+  padding: var(--space-lg) 0;
+}
+
+.skeleton-line {
+  height: 16px;
+  margin-bottom: var(--space-md);
+  background: linear-gradient(90deg, var(--bg-hover) 25%, var(--bg-surface) 50%, var(--bg-hover) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite;
+  border-radius: 4px;
+  width: 60%;
+}
+
+.skeleton-line-long  { width: 90%; }
+.skeleton-line-short { width: 35%; }
+
+.skeleton-block {
+  height: 120px;
+  margin-bottom: var(--space-md);
+  background: linear-gradient(90deg, var(--bg-hover) 25%, var(--bg-surface) 50%, var(--bg-hover) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite;
+  border-radius: var(--radius-sm);
+  width: 100%;
+}
+
+@keyframes skeleton-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ============================================
+   增强版合成配方 3×3 网格
+   Minecraft 风格：工作台纹理 + 槽位阴影 + 悬停高亮
+   ============================================ */
+
+/* 配方整体容器 */
+.crafting-recipe {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  flex-wrap: wrap;
+  padding: var(--space-md);
+  background: linear-gradient(135deg, #f5f3eb 0%, #faf9f5 50%, #f5f3eb 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  position: relative;
+}
+
+/* 3×3 网格容器 — CSS Grid 核心 */
+.crafting-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 48px);
+  grid-template-rows: repeat(3, 48px);
+  gap: 2px;
+  background: #8b8b8b;  /* Minecraft 工作台网格线色 */
+  border: 3px solid #8b8b8b;
+  border-radius: 2px;
+  flex-shrink: 0;
+  box-shadow:
+    inset 0 0 8px rgba(0,0,0,0.15),
+    0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* 配方槽位 — 模拟 Minecraft 物品格 */
+.crafting-cell {
+  width: 48px;
+  height: 48px;
+  background: #8b8b8b;  /* 空槽默认色 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: background var(--transition-fast);
+}
+
+/* 有物品的槽位 */
+.crafting-cell:not(.empty) {
+  background:
+    linear-gradient(135deg, #c8c4b4 0%, #d4d0c0 50%, #c8c4b4 100%);
+  box-shadow: inset 1px 1px 3px rgba(0,0,0,0.2), inset -1px -1px 3px rgba(255,255,255,0.3);
+  cursor: pointer;
+}
+
+.crafting-cell:not(.empty):hover {
+  background:
+    linear-gradient(135deg, #d4d0c0 0%, #e0dcc8 50%, #d4d0c0 100%);
+  box-shadow: inset 1px 1px 3px rgba(0,0,0,0.15), inset -1px -1px 4px rgba(255,255,255,0.4),
+              0 0 0 2px var(--accent-light);
+  z-index: 1;
+}
+
+.crafting-cell:not(.empty):active {
+  background:
+    linear-gradient(135deg, #b8b4a4 0%, #c4c0b0 50%, #b8b4a4 100%);
+}
+
+/* 空槽 */
+.crafting-cell.empty {
+  background:
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 3px,
+      rgba(0,0,0,0.03) 3px,
+      rgba(0,0,0,0.03) 6px
+    ),
+    #8b8b8b;
+}
+
+/* 槽内图标 */
+.crafting-cell img {
+  width: 32px;
+  height: 32px;
+  image-rendering: pixelated;
+  position: relative;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* 数量角标 */
+.crafting-cell-count {
+  position: absolute;
+  bottom: 0;
+  right: 1px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #1a1a1a;
+  text-shadow:
+    -1px -1px 0 #fff,
+     1px -1px 0 #fff,
+    -1px  1px 0 #fff,
+     1px  1px 0 #fff;
+  pointer-events: none;
+  z-index: 2;
+  line-height: 1;
+}
+
+/* 箭头 */
+.crafting-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-crafting);
+  flex-shrink: 0;
+  width: 32px;
+}
+
+.crafting-arrow svg {
+  width: 28px;
+  height: 28px;
+}
+
+/* 结果 */
+.crafting-result {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-shrink: 0;
+  padding: var(--space-sm);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  min-width: 80px;
+  justify-content: center;
+}
+
+.crafting-result img {
+  width: 40px;
+  height: 40px;
+  image-rendering: pixelated;
+}
+
+.crafting-result-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.crafting-result-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: center;
+}
+
+.crafting-result-count {
+  font-size: 12px;
+  color: var(--accent-dark);
+  font-weight: 600;
+}
+
+/* 配方类型标签 */
+.crafting-type {
+  position: absolute;
+  top: var(--space-sm);
+  right: var(--space-sm);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 10px;
+  border-radius: 4px;
+  line-height: 1.4;
+}
+
+/* 主配方（产出当前物品） */
+.crafting-type:not(.crafting-type-secondary) {
+  color: var(--color-crafting);
+  background: rgba(107, 127, 163, 0.12);
+  border: 1px solid rgba(107, 127, 163, 0.25);
+}
+
+/* 副配方（产出其他物品 — 当前物品作为原料） */
+.crafting-type-secondary {
+  color: var(--text-muted);
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+}
+
+/* 多配方分隔 */
+.crafting-recipe + .crafting-recipe {
+  margin-top: var(--space-md);
+}
+
+/* ============================================
+   配方来源 / 用途 (JEI 级双向查询)
+   ============================================ */
+
+.related-item-primary {
+  border-color: var(--accent) !important;
+  background: var(--accent-light) !important;
+}
+
+.related-item-primary::after {
+  content: '主配方';
+  position: absolute;
+  top: 2px;
+  right: 4px;
+  font-size: 9px;
+  color: var(--accent-dark);
+  font-weight: 600;
+}
+
+.related-item {
+  position: relative;
+}
+
+/* ============================================
+   移动端配方适配
+   ============================================ */
+
+@media (max-width: 480px) {
+  .crafting-grid {
+    grid-template-columns: repeat(3, 40px);
+    grid-template-rows: repeat(3, 40px);
+    gap: 1px;
+    border-width: 2px;
+  }
+
+  .crafting-cell {
+    width: 40px;
+    height: 40px;
+  }
+
+  .crafting-cell img {
+    width: 28px;
+    height: 28px;
+  }
+
+  .crafting-recipe {
+    gap: var(--space-sm);
+    padding: var(--space-sm);
+  }
+
+  .crafting-result {
+    min-width: 64px;
+  }
+
+  .crafting-result img {
+    width: 32px;
+    height: 32px;
+  }
+
+  .crafting-arrow svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .skeleton-category-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .skeleton-item-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
